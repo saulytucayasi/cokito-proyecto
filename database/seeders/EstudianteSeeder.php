@@ -16,61 +16,61 @@ class EstudianteSeeder extends Seeder
             [
                 'usuario' => 'juan.perez@gmail.com',
                 'email' => 'juan.perez@gmail.com',
-                'password' => Hash::make('estudiante123'),
+                'password' => 'estudiante123',
                 'rol' => 'estudiante'
             ],
             [
                 'usuario' => 'maria.rodriguez@gmail.com',
                 'email' => 'maria.rodriguez@gmail.com',
-                'password' => Hash::make('estudiante123'),
+                'password' => 'estudiante123',
                 'rol' => 'estudiante'
             ],
             [
                 'usuario' => 'carlos.garcia@gmail.com',
                 'email' => 'carlos.garcia@gmail.com',
-                'password' => Hash::make('estudiante123'),
+                'password' => 'estudiante123',
                 'rol' => 'estudiante'
             ],
             [
                 'usuario' => 'ana.martinez@gmail.com',
                 'email' => 'ana.martinez@gmail.com',
-                'password' => Hash::make('estudiante123'),
+                'password' => 'estudiante123',
                 'rol' => 'estudiante'
             ],
             [
                 'usuario' => 'luis.gonzalez@gmail.com',
                 'email' => 'luis.gonzalez@gmail.com',
-                'password' => Hash::make('estudiante123'),
+                'password' => 'estudiante123',
                 'rol' => 'estudiante'
             ],
             [
                 'usuario' => 'sofia.lopez@gmail.com',
                 'email' => 'sofia.lopez@gmail.com',
-                'password' => Hash::make('estudiante123'),
+                'password' => 'estudiante123',
                 'rol' => 'estudiante'
             ],
             [
                 'usuario' => 'pedro.sanchez@gmail.com',
                 'email' => 'pedro.sanchez@gmail.com',
-                'password' => Hash::make('estudiante123'),
+                'password' => 'estudiante123',
                 'rol' => 'estudiante'
             ],
             [
                 'usuario' => 'laura.fernandez@gmail.com',
                 'email' => 'laura.fernandez@gmail.com',
-                'password' => Hash::make('estudiante123'),
+                'password' => 'estudiante123',
                 'rol' => 'estudiante'
             ],
             [
                 'usuario' => 'diego.morales@gmail.com',
                 'email' => 'diego.morales@gmail.com',
-                'password' => Hash::make('estudiante123'),
+                'password' => 'estudiante123',
                 'rol' => 'estudiante'
             ],
             [
                 'usuario' => 'carmen.torres@gmail.com',
                 'email' => 'carmen.torres@gmail.com',
-                'password' => Hash::make('estudiante123'),
+                'password' => 'estudiante123',
                 'rol' => 'estudiante'
             ]
         ];

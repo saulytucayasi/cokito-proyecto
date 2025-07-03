@@ -16,37 +16,37 @@ class TrabajadorSeeder extends Seeder
             [
                 'usuario' => 'admin@cokito.com',
                 'email' => 'admin@cokito.com',
-                'password' => Hash::make('admin123'),
+                'password' => 'admin123',
                 'rol' => 'admin'
             ],
             [
                 'usuario' => 'carlos.rodriguez@cokito.com',
                 'email' => 'carlos.rodriguez@cokito.com',
-                'password' => Hash::make('docente123'),
+                'password' => 'docente123',
                 'rol' => 'docente'
             ],
             [
                 'usuario' => 'maria.gonzalez@cokito.com',
                 'email' => 'maria.gonzalez@cokito.com',
-                'password' => Hash::make('docente123'),
+                'password' => 'docente123',
                 'rol' => 'docente'
             ],
             [
                 'usuario' => 'luis.martinez@cokito.com',
                 'email' => 'luis.martinez@cokito.com',
-                'password' => Hash::make('docente123'),
+                'password' => 'docente123',
                 'rol' => 'docente'
             ],
             [
                 'usuario' => 'ana.lopez@cokito.com',
                 'email' => 'ana.lopez@cokito.com',
-                'password' => Hash::make('docente123'),
+                'password' => 'docente123',
                 'rol' => 'docente'
             ],
             [
                 'usuario' => 'pedro.sanchez@cokito.com',
                 'email' => 'pedro.sanchez@cokito.com',
-                'password' => Hash::make('docente123'),
+                'password' => 'docente123',
                 'rol' => 'docente'
             ]
         ];
