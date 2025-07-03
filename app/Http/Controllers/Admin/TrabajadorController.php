@@ -66,6 +66,14 @@ class TrabajadorController extends Controller
 
     public function destroy(Trabajador $trabajador)
     {
+        // Verificar si el trabajador puede ser eliminado
+        if ($trabajador->cursosAsignados->isNotEmpty() || 
+            $trabajador->matriculas->isNotEmpty() || 
+            $trabajador->materialesSubidos->isNotEmpty()) {
+            return redirect()->route('admin.trabajadores.index')
+                             ->with('error', 'No se puede eliminar el trabajador porque tiene cursos asignados, matrículas o materiales asociados.');
+        }
+
         $trabajador->delete();
 
         return redirect()->route('admin.trabajadores.index')

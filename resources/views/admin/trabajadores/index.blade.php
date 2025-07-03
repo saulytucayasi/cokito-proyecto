@@ -42,11 +42,18 @@
                             <td style="padding: 0.75rem;">
                                 <a href="{{ route('admin.trabajadores.show', $trabajador->id) }}" class="btn btn-sm btn-info">Ver</a>
                                 <a href="{{ route('admin.trabajadores.edit', $trabajador->id) }}" class="btn btn-sm btn-warning">Editar</a>
-                                <form action="{{ route('admin.trabajadores.destroy', $trabajador->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que quieres eliminar este trabajador?')">Eliminar</button>
-                                </form>
+                                @php
+                                    $puedeEliminar = $trabajador->cursosAsignados->isEmpty() && 
+                                                    $trabajador->matriculas->isEmpty() && 
+                                                    $trabajador->materialesSubidos->isEmpty();
+                                @endphp
+                                @if($puedeEliminar)
+                                    <form action="{{ route('admin.trabajadores.destroy', $trabajador->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que quieres eliminar este trabajador?')">Eliminar</button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                         @endforeach

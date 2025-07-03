@@ -59,6 +59,12 @@ class CicloController extends Controller
 
     public function destroy(Ciclo $ciclo)
     {
+        // Verificar si el ciclo puede ser eliminado
+        if ($ciclo->cursos->isNotEmpty() || $ciclo->matriculas->isNotEmpty()) {
+            return redirect()->route('admin.ciclos.index')
+                             ->with('error', 'No se puede eliminar el ciclo porque tiene cursos o matrículas asociadas.');
+        }
+
         $ciclo->delete();
 
         return redirect()->route('admin.ciclos.index')

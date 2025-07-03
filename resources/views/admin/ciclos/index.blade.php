@@ -32,11 +32,16 @@
                             <td style="padding: 0.75rem;">
                                 <a href="{{ route('admin.ciclos.show', $ciclo->id) }}" class="btn btn-sm btn-info">Ver</a>
                                 <a href="{{ route('admin.ciclos.edit', $ciclo->id) }}" class="btn btn-sm btn-warning">Editar</a>
-                                <form action="{{ route('admin.ciclos.destroy', $ciclo->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que quieres eliminar este ciclo?')">Eliminar</button>
-                                </form>
+                                @php
+                                    $puedeEliminar = $ciclo->cursos->isEmpty() && $ciclo->matriculas->isEmpty();
+                                @endphp
+                                @if($puedeEliminar)
+                                    <form action="{{ route('admin.ciclos.destroy', $ciclo->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que quieres eliminar este ciclo?')">Eliminar</button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
