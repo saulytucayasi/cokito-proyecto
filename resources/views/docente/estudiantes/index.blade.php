@@ -9,35 +9,54 @@
         <h2 style="margin: 0; color: var(--dark-color);">👥 Mis Estudiantes</h2>
         <p style="margin: 0.5rem 0 0 0; color: #6b7280;">Gestiona y evalúa a todos los estudiantes de tus cursos</p>
     </div>
-    <div style="display: flex; gap: 0.75rem;">
-        <button class="btn btn-success" onclick="calificarEstudiantes()">
-            📊 Calificar
-        </button>
-        <button class="btn btn-primary" onclick="exportarReporte()">
-            📋 Exportar
-        </button>
+</div>
+
+<!-- Filtro por áreas -->
+<div class="card" style="margin-bottom: 2rem;">
+    <div class="card-body" style="padding: 1rem 1.5rem;">
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            <span style="font-weight: 600; color: var(--dark-color);">Filtrar por Área:</span>
+            
+            <select id="filtro-area" style="
+                padding: 0.5rem 1rem; 
+                border: 1px solid #e5e7eb; 
+                border-radius: var(--border-radius);
+                background: white;
+                min-width: 200px;
+                font-size: 0.9rem;
+            " onchange="filtrarEstudiantesPorArea()">
+                <option value="">👥 Todas las Áreas</option>
+                @foreach($areas as $area)
+                    <option value="{{ $area->id }}">🎯 {{ $area->nombre_area ?? 'Área sin nombre' }}</option>
+                @endforeach
+            </select>
+            
+            <span id="contador-estudiantes" style="color: #6b7280; font-size: 0.875rem;">
+                Mostrando {{ $estudiantesUnicos->count() }} estudiante(s)
+            </span>
+        </div>
     </div>
 </div>
 
 <!-- Estadísticas de estudiantes -->
 <div class="stats-grid" style="margin-bottom: 2rem;">
     <div class="stat-card">
-        <div class="stat-value">{{ $estudiantesConCursos->count() }}</div>
+        <div class="stat-value">{{ $estudiantesUnicos->count() }}</div>
         <div class="stat-label">Total Estudiantes</div>
     </div>
     
     <div class="stat-card">
-        <div class="stat-value">{{ $estudiantesConCursos->filter(function($e) { return $e->estado_matricula === 'activo'; })->count() }}</div>
-        <div class="stat-label">Estudiantes Activos</div>
+        <div class="stat-value">{{ $estudiantesUnicos->flatMap(function($e) { return $e->mis_cursos; })->where('estado', 'activo')->count() }}</div>
+        <div class="stat-label">Matrículas Activas</div>
     </div>
     
     <div class="stat-card">
-        <div class="stat-value">{{ $estudiantesConCursos->flatMap(function($e) { return $e->mis_cursos; })->count() }}</div>
-        <div class="stat-label">Matrículas Totales</div>
+        <div class="stat-value">{{ $estudiantesUnicos->flatMap(function($e) { return $e->mis_cursos; })->count() }}</div>
+        <div class="stat-label">Total Matrículas</div>
     </div>
     
     <div class="stat-card">
-        <div class="stat-value">{{ $estudiantesConCursos->flatMap(function($e) { return $e->mis_cursos; })->whereNotNull('calificacion_final')->count() }}</div>
+        <div class="stat-value">{{ $estudiantesUnicos->flatMap(function($e) { return $e->mis_cursos; })->whereNotNull('calificacion_final')->count() }}</div>
         <div class="stat-label">Con Calificación</div>
     </div>
 </div>
@@ -56,7 +75,7 @@
                 min-width: 200px;
             " onchange="filtrarEstudiantes()">
                 <option value="">Todos los cursos</option>
-                @foreach($estudiantesConCursos->flatMap(function($e) { return $e->mis_cursos; })->pluck('curso.nombre')->unique() as $nombreCurso)
+                @foreach($estudiantesUnicos->flatMap(function($e) { return $e->mis_cursos; })->pluck('curso.nombre')->unique() as $nombreCurso)
                     <option value="{{ $nombreCurso }}">{{ $nombreCurso }}</option>
                 @endforeach
             </select>
@@ -87,20 +106,21 @@
 </div>
 
 <!-- Grid de estudiantes -->
-@if($estudiantesConCursos->count() > 0)
+@if($estudiantesUnicos->count() > 0)
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 1.5rem;" id="estudiantes-grid">
-        @foreach($estudiantesConCursos as $estudiante)
-        @foreach($estudiante->mis_cursos as $cursoEstudiante)
+        @foreach($estudiantesUnicos as $estudiante)
         @php
-            $curso = $cursoEstudiante->curso;
-            $progreso = $cursoEstudiante->progreso ?? 0;
-            $calificacion = $cursoEstudiante->calificacion_final;
+            $areasEstudiante = $estudiante->mis_cursos->pluck('curso.ciclo.id')->filter()->unique()->toArray();
+            $cursosNombres = $estudiante->mis_cursos->pluck('curso.nombre')->toArray();
         @endphp
         
         <div class="card estudiante-item" 
-             data-curso="{{ $curso->nombre ?? 'Sin curso' }}"
-             data-estado="{{ $cursoEstudiante->estado }}"
+             data-areas="{{ implode(',', $areasEstudiante) }}"
+             data-cursos="{{ implode(',', $cursosNombres) }}"
              data-nombre="{{ $estudiante->nombre ?? '' }} {{ $estudiante->apellido ?? '' }}"
+             data-total-cursos="{{ $estudiante->total_cursos }}"
+             data-progreso-promedio="{{ number_format($estudiante->progreso_promedio, 1) }}"
+             data-calificacion-promedio="{{ $estudiante->calificacion_promedio ? number_format($estudiante->calificacion_promedio, 1) : '--' }}"
              style="overflow: hidden; transition: all 0.3s ease;">
             
             <!-- Header del estudiante -->
@@ -112,15 +132,14 @@
             ">
                 <div style="position: absolute; top: 1rem; right: 1rem;">
                     <span style="
-                        background: {{ $cursoEstudiante->estado === 'activo' ? 'var(--success-color)' : 'var(--warning-color)' }};
+                        background: var(--success-color);
                         color: white;
                         padding: 0.25rem 0.75rem;
                         border-radius: 9999px;
                         font-size: 0.75rem;
                         font-weight: 600;
-                        text-transform: uppercase;
                     ">
-                        {{ $cursoEstudiante->estado === 'activo' ? '✅' : '⏸️' }} {{ ucfirst($cursoEstudiante->estado) }}
+                        📚 {{ $estudiante->total_cursos }} curso(s)
                     </span>
                 </div>
                 
@@ -144,7 +163,7 @@
                             {{ $estudiante->nombre ?? 'Sin nombre' }} {{ $estudiante->apellido ?? '' }}
                         </h3>
                         <p style="margin: 0; opacity: 0.9; font-size: 0.875rem;">
-                            {{ $curso->nombre ?? 'Sin curso' }}
+                            Cursos: {{ implode(', ', array_slice($cursosNombres, 0, 2)) }}{{ count($cursosNombres) > 2 ? '...' : '' }}
                         </p>
                     </div>
                 </div>
@@ -170,11 +189,11 @@
                     </div>
                 </div>
                 
-                <!-- Progreso del estudiante -->
+                <!-- Progreso promedio del estudiante -->
                 <div style="margin-bottom: 1.5rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span style="font-weight: 600; color: var(--dark-color);">Progreso del Curso</span>
-                        <span style="font-weight: 700; color: var(--primary-blue);">{{ number_format($progreso, 1) }}%</span>
+                        <span style="font-weight: 600; color: var(--dark-color);">Progreso Promedio</span>
+                        <span style="font-weight: 700; color: var(--primary-blue);">{{ number_format($estudiante->progreso_promedio, 1) }}%</span>
                     </div>
                     
                     <div style="
@@ -187,7 +206,7 @@
                         <div style="
                             height: 100%; 
                             background: linear-gradient(90deg, var(--primary-blue) 0%, var(--success-color) 100%);
-                            width: {{ $progreso }}%;
+                            width: {{ $estudiante->progreso_promedio }}%;
                             transition: width 0.5s ease;
                             border-radius: 9999px;
                         "></div>
@@ -198,75 +217,66 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                     <div style="text-align: center; padding: 1rem; background: #f0f9ff; border-radius: var(--border-radius);">
                         <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-blue);">
-                            @if($calificacion)
-                                {{ number_format($calificacion, 1) }}
+                            @if($estudiante->calificacion_promedio)
+                                {{ number_format($estudiante->calificacion_promedio, 1) }}
                             @else
                                 --
                             @endif
                         </div>
                         <div style="font-size: 0.75rem; color: #6b7280; font-weight: 600;">
-                            Nota Final
+                            Nota Promedio
                         </div>
                     </div>
                     
                     <div style="text-align: center; padding: 1rem; background: #f0fdf4; border-radius: var(--border-radius);">
                         <div style="font-size: 1.5rem; font-weight: 700; color: var(--success-color);">
-                            {{ rand(1, 10) }}
+                            {{ $estudiante->total_cursos }}
                         </div>
                         <div style="font-size: 0.75rem; color: #6b7280; font-weight: 600;">
-                            Actividades
+                            Cursos Inscritos
                         </div>
                     </div>
                 </div>
                 
-                <!-- Fecha de matrícula -->
+                <!-- Resumen de cursos -->
                 <div style="margin-bottom: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: var(--border-radius); border-left: 4px solid var(--accent-color);">
-                    <div style="font-size: 0.875rem; color: #374151;">
-                        <strong>Matriculado:</strong> {{ $cursoEstudiante->created_at->format('d/m/Y') }}
+                    <div style="font-size: 0.875rem; color: #374151; margin-bottom: 0.5rem;">
+                        <strong>📚 Cursos matriculados:</strong>
                     </div>
-                    @if($cursoEstudiante->fecha_inscripcion)
-                    <div style="font-size: 0.875rem; color: #6b7280;">
-                        <strong>Inscripción:</strong> {{ $cursoEstudiante->fecha_inscripcion->format('d/m/Y') }}
+                    @foreach($estudiante->mis_cursos->take(3) as $cursoItem)
+                    <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">
+                        • {{ $cursoItem->curso->nombre ?? 'Sin nombre' }} 
+                        @if($cursoItem->calificacion_final)
+                            (Nota: {{ $cursoItem->calificacion_final }})
+                        @endif
+                    </div>
+                    @endforeach
+                    @if($estudiante->mis_cursos->count() > 3)
+                    <div style="font-size: 0.75rem; color: #6b7280; font-style: italic;">
+                        ... y {{ $estudiante->mis_cursos->count() - 3 }} curso(s) más
                     </div>
                     @endif
                 </div>
                 
-                <!-- Acciones -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
+                <!-- Acción para ver detalle -->
+                <div style="text-align: center;">
                     <button type="button" 
-                            class="btn btn-accent"
-                            style="padding: 0.5rem; font-size: 0.875rem;"
-                            onclick="verPerfilEstudiante({{ $estudiante->id ?? 0 }})"
-                            title="Ver perfil">
-                        👤
-                    </button>
-                    
-                    <button type="button" 
-                            class="btn btn-success"
-                            style="padding: 0.5rem; font-size: 0.875rem;"
-                            onclick="calificarEstudiante({{ $cursoEstudiante->id }})"
-                            title="Calificar">
-                        📊
-                    </button>
-                    
-                    <button type="button" 
-                            class="btn btn-warning"
-                            style="padding: 0.5rem; font-size: 0.875rem;"
-                            onclick="enviarMensaje({{ $estudiante->id ?? 0 }})"
-                            title="Enviar mensaje">
-                        ✉️
+                            class="btn btn-primary"
+                            style="padding: 0.75rem 1.5rem; font-size: 0.875rem;"
+                            onclick="verDetalleEstudiante({{ $estudiante->id }})"
+                            title="Ver detalle completo del estudiante">
+                        👁️ Ver Detalle
                     </button>
                 </div>
             </div>
         </div>
         @endforeach
-        @endforeach
     </div>
 
     <!-- Paginación -->
-    @if(method_exists($estudiantesConCursos, 'hasPages') && $estudiantesConCursos->hasPages())
+    @if(method_exists($estudiantesUnicos, 'hasPages') && $estudiantesUnicos->hasPages())
     <div style="margin-top: 3rem; text-align: center;">
-        {{ $estudiantesConCursos->links() }}
+        {{ $estudiantesUnicos->links() }}
     </div>
     @endif
 @else
@@ -284,59 +294,6 @@
     </div>
 @endif
 
-<!-- Modal para calificar estudiante -->
-<div id="modal-calificar" style="
-    display: none; 
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    background: rgba(0,0,0,0.5); 
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-">
-    <div style="
-        background: white; 
-        border-radius: var(--border-radius); 
-        padding: 2rem; 
-        width: 90%; 
-        max-width: 500px;
-        max-height: 90vh;
-        overflow-y: auto;
-    ">
-        <h3 style="margin: 0 0 1.5rem 0; color: var(--dark-color);">📊 Calificar Estudiante</h3>
-        
-        <form id="form-calificar">
-            <input type="hidden" id="curso-estudiante-id">
-            
-            <div class="form-group" style="margin-bottom: 1rem;">
-                <label class="form-label">Nota Final (0-20)</label>
-                <input type="number" id="calificacion-final" class="form-control" min="0" max="20" step="0.1" required>
-            </div>
-            
-            <div class="form-group" style="margin-bottom: 1rem;">
-                <label class="form-label">Progreso (%)</label>
-                <input type="number" id="progreso-estudiante" class="form-control" min="0" max="100" step="1" required>
-            </div>
-            
-            <div class="form-group" style="margin-bottom: 2rem;">
-                <label class="form-label">Observaciones</label>
-                <textarea id="observaciones" class="form-control" rows="4" placeholder="Comentarios sobre el desempeño del estudiante..."></textarea>
-            </div>
-            
-            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                <button type="button" class="btn" style="background: #6b7280; color: white;" onclick="cerrarModalCalificar()">
-                    Cancelar
-                </button>
-                <button type="submit" class="btn btn-success">
-                    📊 Guardar Calificación
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
 
 <script>
 function filtrarEstudiantes() {
@@ -346,15 +303,13 @@ function filtrarEstudiantes() {
     const estudiantes = document.querySelectorAll('.estudiante-item');
     
     estudiantes.forEach(estudiante => {
-        const curso = estudiante.getAttribute('data-curso').toLowerCase();
-        const estado = estudiante.getAttribute('data-estado').toLowerCase();
+        const cursos = estudiante.getAttribute('data-cursos').toLowerCase();
         const nombre = estudiante.getAttribute('data-nombre').toLowerCase();
         
-        const cumpleCurso = filtroCurso === '' || curso.includes(filtroCurso);
-        const cumpleEstado = filtroEstado === '' || estado === filtroEstado;
+        const cumpleCurso = filtroCurso === '' || cursos.includes(filtroCurso);
         const cumpleBusqueda = buscarTexto === '' || nombre.includes(buscarTexto);
         
-        if (cumpleCurso && cumpleEstado && cumpleBusqueda) {
+        if (cumpleCurso && cumpleBusqueda) {
             estudiante.style.display = 'block';
         } else {
             estudiante.style.display = 'none';
@@ -362,52 +317,37 @@ function filtrarEstudiantes() {
     });
 }
 
-function verPerfilEstudiante(id) {
-    alert(`Ver perfil de estudiante ID: ${id} (a implementar)`);
-}
-
-function calificarEstudiante(cursoEstudianteId) {
-    document.getElementById('curso-estudiante-id').value = cursoEstudianteId;
-    document.getElementById('modal-calificar').style.display = 'flex';
-}
-
-function enviarMensaje(estudianteId) {
-    alert(`Enviar mensaje a estudiante ID: ${estudianteId} (a implementar)`);
-}
-
-function calificarEstudiantes() {
-    alert('Funcionalidad de calificación masiva a implementar');
-}
-
-function exportarReporte() {
-    alert('Funcionalidad de exportar reporte a implementar');
-}
-
-function cerrarModalCalificar() {
-    document.getElementById('modal-calificar').style.display = 'none';
-    document.getElementById('form-calificar').reset();
-}
-
-// Manejar envío del formulario de calificación
-document.getElementById('form-calificar').addEventListener('submit', function(e) {
-    e.preventDefault();
+function filtrarEstudiantesPorArea() {
+    const areaSeleccionada = document.getElementById('filtro-area').value;
+    const estudiantes = document.querySelectorAll('.estudiante-item');
+    let estudiantesVisibles = 0;
     
-    const cursoEstudianteId = document.getElementById('curso-estudiante-id').value;
-    const calificacion = document.getElementById('calificacion-final').value;
-    const progreso = document.getElementById('progreso-estudiante').value;
-    const observaciones = document.getElementById('observaciones').value;
+    estudiantes.forEach(estudiante => {
+        const areasDelEstudiante = estudiante.getAttribute('data-areas').split(',');
+        
+        if (areaSeleccionada === '' || areasDelEstudiante.includes(areaSeleccionada)) {
+            estudiante.style.display = 'block';
+            estudiantesVisibles++;
+        } else {
+            estudiante.style.display = 'none';
+        }
+    });
     
-    alert('Calificación guardada exitosamente');
-    cerrarModalCalificar();
-    location.reload();
-});
-
-// Cerrar modal al hacer click fuera
-document.getElementById('modal-calificar').addEventListener('click', function(e) {
-    if (e.target === this) {
-        cerrarModalCalificar();
+    // Actualizar contador
+    const contador = document.getElementById('contador-estudiantes');
+    if (areaSeleccionada === '') {
+        contador.textContent = `Mostrando ${estudiantesVisibles} estudiante(s) - Todas las áreas`;
+    } else {
+        const nombreArea = document.querySelector(`option[value="${areaSeleccionada}"]`).textContent.replace('🎯 ', '');
+        contador.textContent = `Mostrando ${estudiantesVisibles} estudiante(s) en ${nombreArea}`;
     }
-});
+}
+
+function verDetalleEstudiante(estudianteId) {
+    // Redirigir a la vista de detalle del estudiante
+    window.location.href = `/docente/estudiantes/${estudianteId}`;
+}
+
 
 // Efectos hover para las cards
 document.addEventListener('DOMContentLoaded', function() {

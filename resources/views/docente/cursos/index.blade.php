@@ -10,13 +10,91 @@
             <h2 style="margin: 0; color: var(--dark-color);">📚 Mis Cursos Asignados</h2>
             <p style="margin: 0.5rem 0 0 0; color: #6b7280;">Administra tus cursos, estudiantes y contenido educativo</p>
         </div>
-        <div style="display: flex; gap: 0.75rem;">
-            <button class="btn btn-success" onclick="calificarEstudiantes()">
-                📊 Calificar
-            </button>
-            <button class="btn btn-primary" onclick="exportarReporte()">
-                📋 Exportar
-            </button>
+    </div>
+</div>
+
+<!-- Navegación de Áreas -->
+<div class="card" id="seccion-areas" style="margin-bottom: 2rem;">
+    <div class="card-header">
+        <h3>🎯 Áreas Académicas</h3>
+    </div>
+    <div class="card-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+            @foreach($areas as $area)
+            @php
+                $cursosDelArea = $cursosAsignados->where('ciclo.id', $area->id);
+                $estudiantesDelArea = $cursosDelArea->sum(function($curso) { return $curso->cursoEstudiantes->count(); });
+                $materialesDelArea = $cursosDelArea->sum(function($curso) { return $curso->materiales->count(); });
+            @endphp
+            
+            <div class="card area-card" 
+                 style="cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;"
+                 onclick="verCursosDelArea('{{ $area->id }}', '{{ $area->nombre_area ?? 'Área sin nombre' }}')"
+                 onmouseenter="this.style.borderColor='var(--primary-blue)'; this.style.transform='translateY(-2px)'"
+                 onmouseleave="this.style.borderColor='transparent'; this.style.transform='translateY(0)'">
+                
+                <div style="padding: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div>
+                            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-blue); font-size: 1.25rem;">
+                                🎯 {{ $area->nombre_area ?? 'Área sin nombre' }}
+                            </h4>
+                            @if($area->descripcion)
+                            <p style="margin: 0; color: #6b7280; font-size: 0.875rem;">
+                                {{ Str::limit($area->descripcion, 100) }}
+                            </p>
+                            @endif
+                        </div>
+                        <span style="
+                            background: var(--accent-color);
+                            color: white;
+                            padding: 0.25rem 0.75rem;
+                            border-radius: 9999px;
+                            font-size: 0.75rem;
+                            font-weight: 600;
+                        ">
+                            {{ $cursosDelArea->count() }} curso(s)
+                        </span>
+                    </div>
+                    
+                    <!-- Estadísticas del área -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                        <div style="text-align: center; padding: 0.75rem; background: #f0f9ff; border-radius: var(--border-radius);">
+                            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-blue);">
+                                {{ $cursosDelArea->count() }}
+                            </div>
+                            <div style="font-size: 0.7rem; color: #6b7280; font-weight: 600;">
+                                Cursos
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 0.75rem; background: #f0fdf4; border-radius: var(--border-radius);">
+                            <div style="font-size: 1.25rem; font-weight: 700; color: var(--success-color);">
+                                {{ $estudiantesDelArea }}
+                            </div>
+                            <div style="font-size: 0.7rem; color: #6b7280; font-weight: 600;">
+                                Estudiantes
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 0.75rem; background: #fef3c7; border-radius: var(--border-radius);">
+                            <div style="font-size: 1.25rem; font-weight: 700; color: var(--accent-color);">
+                                {{ $materialesDelArea }}
+                            </div>
+                            <div style="font-size: 0.7rem; color: #6b7280; font-weight: 600;">
+                                Materiales
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <span style="color: var(--primary-blue); font-weight: 600; font-size: 0.875rem;">
+                            👆 Clic para ver cursos
+                        </span>
+                    </div>
+                </div>
+            </div>
+            @endforeach
         </div>
     </div>
 </div>
@@ -44,9 +122,29 @@
     </div>
 </div>
 
+<!-- Sección de cursos por área -->
+<div id="seccion-cursos-area" style="display: none; margin-bottom: 2rem;">
+    <div class="card">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 id="titulo-area-seleccionada">📚 Cursos del Área</h3>
+                <p style="margin: 0.5rem 0 0 0; color: #6b7280;" id="descripcion-area-seleccionada">Cursos disponibles en esta área</p>
+            </div>
+            <button type="button" class="btn" style="background: #6b7280; color: white;" onclick="volverAreas()">
+                ← Volver a Áreas
+            </button>
+        </div>
+        <div class="card-body">
+            <div id="grid-cursos-area" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 2rem;">
+                <!-- Los cursos se insertarán aquí dinámicamente -->
+            </div>
+        </div>
+    </div>
+</div>
+
 @if($cursosAsignados->count() > 0)
-    <!-- Grid de cursos -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 2rem;">
+    <!-- Grid de cursos (oculto inicialmente) -->
+    <div id="todos-los-cursos" style="display: none; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 2rem;">
         @foreach($cursosAsignados as $curso)
         @php
             $ciclo = $curso->ciclo ?? null;
@@ -56,7 +154,14 @@
             $promedioProgreso = $curso->cursoEstudiantes->avg('progreso') ?? 0;
         @endphp
         
-        <div class="card" style="overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+        <div class="card curso-item" 
+             data-area-id="{{ $curso->ciclo->id ?? '' }}"
+             data-area-nombre="{{ $curso->ciclo->nombre_area ?? '' }}"
+             data-estado="{{ $curso->estado }}"
+             data-estudiantes="{{ $estudiantesCount }}"
+             data-materiales="{{ $materialesCount }}"
+             data-videos="{{ $videosCount }}"
+             style="overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease;">
             <!-- Header del curso -->
             <div style="
                 background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
@@ -162,46 +267,13 @@
                 </div>
                 @endif
                 
-                <!-- Acciones de gestión -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
-                    <a href="{{ route('docente.estudiantes.por-curso', $curso->id) }}" 
+                <!-- Acción principal -->
+                <div style="text-align: center;">
+                    <a href="{{ route('docente.cursos.show', $curso->id) }}" 
                        class="btn btn-primary" 
-                       style="text-align: center; padding: 0.75rem; font-size: 0.875rem;">
-                        👥 Estudiantes
+                       style="padding: 0.75rem 2rem; font-size: 0.875rem; text-decoration: none;">
+                        📖 Ver Curso
                     </a>
-                    
-                    <a href="{{ route('docente.materiales.por-curso', $curso->id) }}" 
-                       class="btn" 
-                       style="
-                           background: var(--success-color); 
-                           color: white; 
-                           text-align: center; 
-                           padding: 0.75rem; 
-                           font-size: 0.875rem;
-                           text-decoration: none;
-                       ">
-                        📁 Materiales
-                    </a>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                    <a href="{{ route('docente.videos.por-curso', $curso->id) }}" 
-                       class="btn btn-accent" 
-                       style="
-                           text-align: center; 
-                           padding: 0.75rem; 
-                           font-size: 0.875rem;
-                           text-decoration: none;
-                       ">
-                        🎥 Videos
-                    </a>
-                    
-                    <button type="button"
-                            class="btn btn-warning"
-                            style="padding: 0.75rem; font-size: 0.875rem;"
-                            onclick="generarReporte({{ $curso->id }})">
-                        📊 Reporte
-                    </button>
                 </div>
             </div>
         </div>
@@ -229,52 +301,6 @@
     </div>
 @endif
 
-<!-- Herramientas rápidas -->
-<div class="card" style="margin-top: 2rem;">
-    <div class="card-header">
-        <h3>🛠️ Herramientas Rápidas</h3>
-    </div>
-    <div class="card-body">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
-            <button type="button" 
-                    class="btn btn-primary" 
-                    style="padding: 1rem; text-align: left;"
-                    onclick="subirMaterial()">
-                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📎</div>
-                <div style="font-weight: 600;">Subir Material</div>
-                <div style="font-size: 0.875rem; opacity: 0.8;">Agrega contenido a tus cursos</div>
-            </button>
-            
-            <button type="button" 
-                    class="btn btn-accent" 
-                    style="padding: 1rem; text-align: left;"
-                    onclick="agregarVideo()">
-                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🎥</div>
-                <div style="font-weight: 600;">Agregar Video</div>
-                <div style="font-size: 0.875rem; opacity: 0.8;">Añade videos de YouTube</div>
-            </button>
-            
-            <button type="button" 
-                    class="btn btn-success" 
-                    style="padding: 1rem; text-align: left;"
-                    onclick="calificarEstudiantes()">
-                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📋</div>
-                <div style="font-weight: 600;">Calificar</div>
-                <div style="font-size: 0.875rem; opacity: 0.8;">Evalúa a tus estudiantes</div>
-            </button>
-            
-            <button type="button" 
-                    class="btn btn-warning" 
-                    style="padding: 1rem; text-align: left;"
-                    onclick="verReportes()">
-                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📈</div>
-                <div style="font-weight: 600;">Reportes</div>
-                <div style="font-size: 0.875rem; opacity: 0.8;">Analiza el progreso</div>
-            </button>
-        </div>
-    </div>
-</div>
-
 <script>
 function generarReporte(cursoId) {
     alert(`Generar reporte para curso ID: ${cursoId} (a implementar)`);
@@ -294,6 +320,105 @@ function calificarEstudiantes() {
 
 function verReportes() {
     alert('Funcionalidad de reportes a implementar');
+}
+
+function verCursosDelArea(areaId, nombreArea) {
+    // Ocultar la sección de áreas
+    document.getElementById('seccion-areas').style.display = 'none';
+    
+    // Mostrar la sección de cursos del área
+    document.getElementById('seccion-cursos-area').style.display = 'block';
+    
+    // Actualizar el título
+    document.getElementById('titulo-area-seleccionada').textContent = `📚 Cursos de ${nombreArea}`;
+    document.getElementById('descripcion-area-seleccionada').textContent = `Cursos disponibles en el área de ${nombreArea}`;
+    
+    // Filtrar y mostrar solo los cursos del área seleccionada
+    const todosLosCursos = document.querySelectorAll('.curso-item');
+    const gridCursosArea = document.getElementById('grid-cursos-area');
+    
+    // Limpiar el grid del área
+    gridCursosArea.innerHTML = '';
+    
+    let cursosEncontrados = 0;
+    todosLosCursos.forEach(curso => {
+        const areaDelCurso = curso.getAttribute('data-area-id');
+        
+        if (areaDelCurso === areaId) {
+            // Clonar el curso y agregarlo al grid del área
+            const cursoClonado = curso.cloneNode(true);
+            gridCursosArea.appendChild(cursoClonado);
+            cursosEncontrados++;
+        }
+    });
+    
+    // Si no hay cursos en el área
+    if (cursosEncontrados === 0) {
+        gridCursosArea.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #6b7280;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📚</div>
+                <h3 style="margin-bottom: 1rem;">No hay cursos en esta área</h3>
+                <p>No tienes cursos asignados en el área de ${nombreArea}</p>
+            </div>
+        `;
+    }
+    
+    // Actualizar estadísticas para el área
+    actualizarEstadisticasArea(areaId);
+}
+
+function volverAreas() {
+    // Mostrar la sección de áreas
+    document.getElementById('seccion-areas').style.display = 'block';
+    
+    // Ocultar la sección de cursos del área
+    document.getElementById('seccion-cursos-area').style.display = 'none';
+    
+    // Restaurar estadísticas generales
+    restaurarEstadisticasGenerales();
+}
+
+function actualizarEstadisticasArea(areaId) {
+    const cursos = document.querySelectorAll('.curso-item');
+    let cursosDelArea = 0;
+    let cursosActivos = 0;
+    let totalEstudiantes = 0;
+    let totalMateriales = 0;
+    
+    cursos.forEach(curso => {
+        const areaDelCurso = curso.getAttribute('data-area-id');
+        
+        if (areaDelCurso === areaId) {
+            cursosDelArea++;
+            
+            if (curso.getAttribute('data-estado') === 'activo') {
+                cursosActivos++;
+            }
+            
+            totalEstudiantes += parseInt(curso.getAttribute('data-estudiantes')) || 0;
+            totalMateriales += parseInt(curso.getAttribute('data-materiales')) || 0;
+        }
+    });
+    
+    // Actualizar las tarjetas de estadísticas
+    const statsCards = document.querySelectorAll('.stat-card .stat-value');
+    if (statsCards.length >= 4) {
+        statsCards[0].textContent = cursosDelArea;
+        statsCards[1].textContent = cursosActivos;
+        statsCards[2].textContent = totalEstudiantes;
+        statsCards[3].textContent = totalMateriales;
+    }
+}
+
+function restaurarEstadisticasGenerales() {
+    // Restaurar los valores originales de las estadísticas
+    const statsCards = document.querySelectorAll('.stat-card .stat-value');
+    if (statsCards.length >= 4) {
+        statsCards[0].textContent = '{{ $cursosAsignados->count() }}';
+        statsCards[1].textContent = '{{ $cursosAsignados->where("estado", "activo")->count() }}';
+        statsCards[2].textContent = '{{ $cursosAsignados->sum(function($curso) { return $curso->cursoEstudiantes->count(); }) }}';
+        statsCards[3].textContent = '{{ $cursosAsignados->sum(function($curso) { return $curso->materiales->count(); }) }}';
+    }
 }
 
 // Efectos hover para las cards
@@ -317,6 +442,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <style>
 @media (max-width: 768px) {
+    /* Responsivo para áreas */
+    #seccion-areas .card-body > div {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Responsivo para cursos */
     .card .card-body > div:nth-child(3) {
         grid-template-columns: 1fr;
     }
@@ -325,6 +456,17 @@ document.addEventListener('DOMContentLoaded', function() {
     .card .card-body > div:nth-child(6) {
         grid-template-columns: 1fr;
     }
+    
+    /* Grid de cursos en área */
+    #grid-cursos-area {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Efectos hover para las áreas */
+.area-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 </style>
 @endsection

@@ -24,7 +24,10 @@ class CursoController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         
-        return view('docente.cursos.index', compact('cursosAsignados'));
+        // Obtener todas las áreas (ciclos) que tienen cursos asignados al docente
+        $areas = $cursosAsignados->pluck('ciclo')->filter()->unique('id')->values();
+        
+        return view('docente.cursos.index', compact('cursosAsignados', 'areas'));
     }
 
     public function create()

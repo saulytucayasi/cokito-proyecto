@@ -73,6 +73,7 @@ Route::middleware(['auth', 'role:docente'])->prefix('docente')->name('docente.')
     Route::get('/estudiantes', [DocenteEstudianteController::class, 'index'])->name('estudiantes.index');
     Route::get('/estudiantes/curso/{curso}', [DocenteEstudianteController::class, 'index'])->name('estudiantes.por-curso');
     Route::get('/estudiantes/{estudiante}', [DocenteEstudianteController::class, 'show'])->name('estudiantes.show');
+    Route::post('/estudiantes/calificar', [DocenteEstudianteController::class, 'calificar'])->name('estudiantes.calificar');
 });
 
 // Secretaria Routes

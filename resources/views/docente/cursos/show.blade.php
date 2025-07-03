@@ -116,14 +116,6 @@
                                 </p>
                                 @endif
                             </div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button onclick="editarSesion({{ $sesion->id }})" class="btn" style="background-color: var(--warning-color); color: white; font-size: 0.875rem; padding: 0.5rem 1rem;">
-                                    ✏️ Editar
-                                </button>
-                                <button onclick="calificarSesion({{ $sesion->id }})" class="btn btn-success" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
-                                    📊 Calificar
-                                </button>
-                            </div>
                         </div>
                     </div>
                     @endforeach
@@ -132,10 +124,7 @@
                 <div style="text-align: center; padding: 3rem; color: #6b7280;">
                     <div style="font-size: 4rem; margin-bottom: 1rem;">📅</div>
                     <h3 style="margin-bottom: 1rem;">No hay sesiones programadas</h3>
-                    <p style="margin-bottom: 2rem;">Agrega sesiones para estructurar tu curso</p>
-                    <button class="btn btn-primary" onclick="crearSesion()">
-                        ➕ Crear Primera Sesión
-                    </button>
+                    <p>Las sesiones aparecerán aquí cuando se programen</p>
                 </div>
             @endif
         </div>
@@ -145,11 +134,8 @@
 <!-- Pestaña Materiales -->
 <div id="content-materiales" class="tab-content">
     <div class="card">
-        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="card-header">
             <h3>📁 Materiales del Curso</h3>
-            <a href="{{ route('docente.materiales.create') }}?curso_id={{ $curso->id }}" class="btn btn-primary">
-                ➕ Subir Material
-            </a>
         </div>
         <div class="card-body">
             @if($curso->materiales->count() > 0)
@@ -189,9 +175,6 @@
                             <a href="{{ route('materiales.download', $material->id) }}" class="btn btn-primary" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
                                 📥 Descargar
                             </a>
-                            <a href="{{ route('docente.materiales.edit', $material->id) }}" class="btn" style="background-color: var(--warning-color); color: white; font-size: 0.875rem; padding: 0.5rem 1rem;">
-                                ✏️ Editar
-                            </a>
                         </div>
                     </div>
                     @endforeach
@@ -213,11 +196,8 @@
 <!-- Pestaña Videos -->
 <div id="content-videos" class="tab-content">
     <div class="card">
-        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="card-header">
             <h3>🎥 Videos del Curso</h3>
-            <a href="{{ route('docente.videos.create') }}?curso_id={{ $curso->id }}" class="btn btn-primary">
-                ➕ Agregar Video
-            </a>
         </div>
         <div class="card-body">
             @if($curso->videos->count() > 0)
@@ -275,9 +255,6 @@
                                     <a href="{{ $video->url_youtube }}" target="_blank" class="btn" style="background-color: #ff0000; color: white; font-size: 0.875rem; padding: 0.5rem 1rem;">
                                         ▶️ Ver en YouTube
                                     </a>
-                                    <a href="{{ route('docente.videos.edit', $video->id) }}" class="btn" style="background-color: var(--warning-color); color: white; font-size: 0.875rem; padding: 0.5rem 1rem;">
-                                        ✏️ Editar
-                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -288,10 +265,7 @@
                 <div style="text-align: center; padding: 3rem; color: #6b7280;">
                     <div style="font-size: 4rem; margin-bottom: 1rem;">🎥</div>
                     <h3 style="margin-bottom: 1rem;">No hay videos agregados</h3>
-                    <p style="margin-bottom: 2rem;">Agrega videos de YouTube para complementar el curso</p>
-                    <a href="{{ route('docente.videos.create') }}?curso_id={{ $curso->id }}" class="btn btn-primary">
-                        ➕ Agregar Primer Video
-                    </a>
+                    <p>Los videos aparecerán aquí cuando se agreguen</p>
                 </div>
             @endif
         </div>
@@ -315,7 +289,10 @@
                         border: 1px solid #e5e7eb; 
                         border-radius: var(--border-radius);
                         background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-                    ">
+                    " 
+                    data-curso-estudiante-id="{{ $cursoEstudiante->id }}"
+                    data-calificacion="{{ $cursoEstudiante->calificacion_final ?? '' }}"
+                    data-progreso="{{ number_format($cursoEstudiante->progreso ?? 0, 1) }}">
                         <div style="
                             width: 50px; 
                             height: 50px; 
@@ -343,7 +320,11 @@
                             </div>
                         </div>
                         <div style="display: flex; gap: 0.5rem;">
-                            <button onclick="calificarEstudianteCurso({{ $cursoEstudiante->id }})" class="btn btn-success" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
+                            <button type="button" 
+                                    class="btn btn-success"
+                                    style="font-size: 0.875rem; padding: 0.5rem 1rem;"
+                                    onclick="calificarEstudiante({{ $cursoEstudiante->id }})"
+                                    title="Calificar estudiante en este curso">
                                 📊 Calificar
                             </button>
                             <a href="{{ route('docente.estudiantes.show', $cursoEstudiante->estudiante->id) }}" class="btn btn-primary" style="font-size: 0.875rem; padding: 0.5rem 1rem;">
@@ -361,6 +342,60 @@
                 </div>
             @endif
         </div>
+    </div>
+</div>
+
+<!-- Modal para calificar estudiante -->
+<div id="modal-calificar" style="
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(0,0,0,0.5); 
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+">
+    <div style="
+        background: white; 
+        border-radius: var(--border-radius); 
+        padding: 2rem; 
+        width: 90%; 
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+    ">
+        <h3 style="margin: 0 0 1.5rem 0; color: var(--dark-color);">📊 Calificar Estudiante en {{ $curso->nombre }}</h3>
+        
+        <form id="form-calificar">
+            <input type="hidden" id="curso-estudiante-id">
+            
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--dark-color);">Nota Final (0-20)</label>
+                <input type="number" id="calificacion-final" style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: var(--border-radius);" min="0" max="20" step="0.1" required>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--dark-color);">Progreso (%)</label>
+                <input type="number" id="progreso-estudiante" style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: var(--border-radius);" min="0" max="100" step="1" required>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--dark-color);">Observaciones</label>
+                <textarea id="observaciones" style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: var(--border-radius);" rows="4" placeholder="Comentarios sobre el desempeño del estudiante..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button type="button" class="btn" style="background: #6b7280; color: white;" onclick="cerrarModalCalificar()">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-success">
+                    📊 Guardar Calificación
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -430,5 +465,90 @@ function calificarSesion(sesionId) {
 function calificarEstudianteCurso(cursoEstudianteId) {
     alert('Calificar estudiante en curso. ID: ' + cursoEstudianteId);
 }
+
+function calificarEstudiante(cursoEstudianteId) {
+    document.getElementById('curso-estudiante-id').value = cursoEstudianteId;
+    
+    // Buscar los datos actuales del estudiante en la página
+    const estudianteCard = document.querySelector(`[data-curso-estudiante-id="${cursoEstudianteId}"]`);
+    if (estudianteCard) {
+        // Si ya tiene calificación, llenar el modal con los datos existentes
+        const calificacionActual = estudianteCard.getAttribute('data-calificacion');
+        const progresoActual = estudianteCard.getAttribute('data-progreso');
+        
+        if (calificacionActual && calificacionActual !== '--' && calificacionActual !== 'null') {
+            document.getElementById('calificacion-final').value = calificacionActual;
+        }
+        if (progresoActual) {
+            document.getElementById('progreso-estudiante').value = progresoActual;
+        }
+    }
+    
+    document.getElementById('modal-calificar').style.display = 'flex';
+}
+
+function cerrarModalCalificar() {
+    document.getElementById('modal-calificar').style.display = 'none';
+    document.getElementById('form-calificar').reset();
+}
+
+// Manejar envío del formulario de calificación
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('form-calificar').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const cursoEstudianteId = document.getElementById('curso-estudiante-id').value;
+        const calificacion = document.getElementById('calificacion-final').value;
+        const progreso = document.getElementById('progreso-estudiante').value;
+        const observaciones = document.getElementById('observaciones').value;
+        
+        // Deshabilitar el botón mientras se procesa
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Guardando...';
+        
+        // Enviar datos al servidor
+        fetch('{{ route("docente.estudiantes.calificar") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                curso_estudiante_id: cursoEstudianteId,
+                calificacion_final: calificacion,
+                progreso: progreso,
+                observaciones: observaciones
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('✅ ' + data.message);
+                cerrarModalCalificar();
+                location.reload();
+            } else {
+                alert('❌ Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('❌ Error al guardar la calificación. Intente nuevamente.');
+        })
+        .finally(() => {
+            // Rehabilitar el botón
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        });
+    });
+
+    // Cerrar modal al hacer click fuera
+    document.getElementById('modal-calificar').addEventListener('click', function(e) {
+        if (e.target === this) {
+            cerrarModalCalificar();
+        }
+    });
+});
 </script>
 @endsection

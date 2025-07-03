@@ -26,7 +26,7 @@
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+<div>
     <div class="card">
         <div class="card-header">
             <h3>Mis Cursos Recientes</h3>
@@ -71,31 +71,6 @@
             @else
                 <p style="text-align: center; color: #6b7280; padding: 2rem;">No tienes cursos asignados</p>
             @endif
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <h3>Herramientas Docente</h3>
-        </div>
-        <div class="card-body">
-            <div style="display: flex; flex-direction: column; gap: 1rem;">
-                <a href="{{ route('docente.cursos.index') }}" class="btn btn-primary">
-                    📚 Gestionar Cursos
-                </a>
-                <a href="{{ route('docente.estudiantes.index') }}" class="btn btn-success">
-                    🎓 Ver Estudiantes
-                </a>
-                <a href="{{ route('docente.materiales.index') }}" class="btn btn-warning">
-                    📁 Subir Materiales
-                </a>
-                <a href="#" class="btn btn-accent">
-                    📺 Gestionar Videos
-                </a>
-                <a href="#" class="btn" style="background-color: #8b5cf6; color: white;">
-                    📊 Calificar Estudiantes
-                </a>
-            </div>
         </div>
     </div>
 </div>
