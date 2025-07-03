@@ -36,7 +36,7 @@
                             <td style="padding: 0.75rem;">{{ $estudiante->correo }}</td>
                             <td style="padding: 0.75rem;">{{ $estudiante->telefono }}</td>
                             <td style="padding: 0.75rem;">{{ ucfirst($estudiante->estado_matricula) }}</td>
-                            <td style="padding: 0.75rem;">{{ $estudiante->fecha_registro->format('d/m/Y') }}</td>
+                            <td style="padding: 0.75rem;">{{ $estudiante->fecha_registro ? $estudiante->fecha_registro->format('d/m/Y') : 'No definida' }}</td>
                             <td style="padding: 0.75rem;">
                                 <a href="{{ route('admin.estudiantes.show', $estudiante->id) }}" class="btn btn-sm btn-info">Ver</a>
                                 <a href="{{ route('admin.estudiantes.edit', $estudiante->id) }}" class="btn btn-sm btn-warning">Editar</a>

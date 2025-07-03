@@ -24,10 +24,9 @@ class EstudianteController extends Controller
         $request->validate([
             'nombre' => 'required|string|max:255',
             'apellido' => 'required|string|max:255',
-            'dni' => 'required|string|max:20|unique:estudiantes',
-            'email' => 'required|email|max:255|unique:estudiantes',
+            'dni' => 'required|string|max:20|unique:estudiante',
+            'correo' => 'required|email|max:255|unique:estudiante',
             'fecha_nacimiento' => 'nullable|date',
-            'direccion' => 'nullable|string|max:255',
             'telefono' => 'nullable|string|max:20',
         ]);
 
@@ -52,10 +51,9 @@ class EstudianteController extends Controller
         $request->validate([
             'nombre' => 'required|string|max:255',
             'apellido' => 'required|string|max:255',
-            'dni' => 'required|string|max:20|unique:estudiantes,dni,' . $estudiante->id,
-            'email' => 'required|email|max:255|unique:estudiantes,email,' . $estudiante->id,
+            'dni' => 'required|string|max:20|unique:estudiante,dni,' . $estudiante->id,
+            'correo' => 'required|email|max:255|unique:estudiante,correo,' . $estudiante->id,
             'fecha_nacimiento' => 'nullable|date',
-            'direccion' => 'nullable|string|max:255',
             'telefono' => 'nullable|string|max:20',
         ]);
 
@@ -67,6 +65,12 @@ class EstudianteController extends Controller
 
     public function destroy(Estudiante $estudiante)
     {
+        // Eliminar primero todas las relaciones que referencian al estudiante
+        $estudiante->cursoEstudiantes()->delete();
+        $estudiante->matriculas()->delete();
+        $estudiante->progresoSesiones()->delete();
+        
+        // Eliminar el estudiante
         $estudiante->delete();
 
         return redirect()->route('admin.estudiantes.index')

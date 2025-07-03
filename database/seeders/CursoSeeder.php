@@ -10,156 +10,195 @@ class CursoSeeder extends Seeder
     public function run(): void
     {
         $cursos = [
-            // Cursos de Desarrollo Web Frontend (Ciclo 1)
+            // CICLO PRIMARIA (Matematica) - Ciclo 1
             [
-                'nombre' => 'HTML5 y CSS3 Fundamentals',
-                'descripcion' => 'Aprende los fundamentos de HTML5 y CSS3 para crear páginas web modernas y responsivas.',
+                'nombre' => 'ARITMÉTICA',
+                'descripcion' => 'Fundamentos de aritmética: operaciones básicas, fracciones, decimales y porcentajes.',
                 'nivel' => 'Básico',
-                'costo' => '299.00',
-                'duracion' => '8 semanas',
-                'modalidad' => 'Virtual',
-                'fecha_inicio' => '2024-03-01',
-                'fecha_fin' => '2024-04-26',
-                'ciclo_id' => 1,
-                'docente_id' => 2, // Carlos Rodríguez
-                'estado' => 'activo'
-            ],
-            [
-                'nombre' => 'JavaScript Moderno ES6+',
-                'descripcion' => 'Domina JavaScript moderno con ES6+, async/await, destructuring y más.',
-                'nivel' => 'Intermedio',
-                'costo' => '399.00',
-                'duracion' => '10 semanas',
-                'modalidad' => 'Virtual',
-                'fecha_inicio' => '2024-03-15',
-                'fecha_fin' => '2024-05-24',
-                'ciclo_id' => 1,
-                'docente_id' => 3, // María González
-                'estado' => 'activo'
-            ],
-            [
-                'nombre' => 'React.js para Principiantes',
-                'descripcion' => 'Construye aplicaciones web interactivas con React.js y sus hooks.',
-                'nivel' => 'Intermedio',
-                'costo' => '499.00',
+                'costo' => '150.00',
                 'duracion' => '12 semanas',
-                'modalidad' => 'Virtual',
-                'fecha_inicio' => '2024-04-01',
-                'fecha_fin' => '2024-06-21',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-03-01',
+                'fecha_fin' => '2025-05-24',
                 'ciclo_id' => 1,
-                'docente_id' => 2, // Carlos Rodríguez
-                'estado' => 'activo'
-            ],
-
-            // Cursos de Desarrollo Web Backend (Ciclo 2)
-            [
-                'nombre' => 'PHP y Laravel Framework',
-                'descripcion' => 'Desarrollo backend profesional con PHP y el framework Laravel.',
-                'nivel' => 'Avanzado',
-                'costo' => '599.00',
-                'duracion' => '14 semanas',
-                'modalidad' => 'Virtual',
-                'fecha_inicio' => '2024-04-01',
-                'fecha_fin' => '2024-07-05',
-                'ciclo_id' => 2,
-                'docente_id' => 4, // Luis Martínez
+                'docente_id' => 2,
                 'estado' => 'activo'
             ],
             [
-                'nombre' => 'Node.js y Express',
-                'descripcion' => 'Crea APIs REST robustas con Node.js y Express.js.',
-                'nivel' => 'Avanzado',
-                'costo' => '549.00',
-                'duracion' => '12 semanas',
-                'modalidad' => 'Virtual',
-                'fecha_inicio' => '2024-04-15',
-                'fecha_fin' => '2024-07-05',
-                'ciclo_id' => 2,
-                'docente_id' => 3, // María González
-                'estado' => 'activo'
-            ],
-            [
-                'nombre' => 'Bases de Datos MySQL y MongoDB',
-                'descripcion' => 'Diseño y administración de bases de datos relacionales y NoSQL.',
-                'nivel' => 'Intermedio',
-                'costo' => '449.00',
-                'duracion' => '10 semanas',
-                'modalidad' => 'Virtual',
-                'fecha_inicio' => '2024-05-01',
-                'fecha_fin' => '2024-07-10',
-                'ciclo_id' => 2,
-                'docente_id' => 4, // Luis Martínez
-                'estado' => 'activo'
-            ],
-
-            // Cursos de Data Science (Ciclo 3)
-            [
-                'nombre' => 'Python para Data Science',
-                'descripcion' => 'Fundamentos de Python aplicado a ciencia de datos con Pandas y NumPy.',
-                'nivel' => 'Intermedio',
-                'costo' => '649.00',
-                'duracion' => '12 semanas',
-                'modalidad' => 'Virtual',
-                'fecha_inicio' => '2024-05-01',
-                'fecha_fin' => '2024-07-26',
-                'ciclo_id' => 3,
-                'docente_id' => 5, // Ana López
-                'estado' => 'activo'
-            ],
-            [
-                'nombre' => 'Machine Learning con Scikit-Learn',
-                'descripcion' => 'Algoritmos de machine learning aplicados con Python y Scikit-Learn.',
-                'nivel' => 'Avanzado',
-                'costo' => '749.00',
-                'duracion' => '14 semanas',
-                'modalidad' => 'Virtual',
-                'fecha_inicio' => '2024-06-01',
-                'fecha_fin' => '2024-08-30',
-                'ciclo_id' => 3,
-                'docente_id' => 5, // Ana López
-                'estado' => 'activo'
-            ],
-
-            // Cursos de Diseño UX/UI (Ciclo 4)
-            [
-                'nombre' => 'Fundamentos de UX Design',
-                'descripcion' => 'Principios de experiencia de usuario, research y prototipado.',
+                'nombre' => 'ÁLGEBRA',
+                'descripcion' => 'Introducción al álgebra: ecuaciones, sistemas de ecuaciones y factorización.',
                 'nivel' => 'Básico',
-                'costo' => '349.00',
-                'duracion' => '8 semanas',
-                'modalidad' => 'Virtual',
-                'fecha_inicio' => '2024-02-01',
-                'fecha_fin' => '2024-03-29',
-                'ciclo_id' => 4,
-                'docente_id' => 6, // Pedro Sánchez
-                'estado' => 'activo'
-            ],
-            [
-                'nombre' => 'UI Design con Figma',
-                'descripcion' => 'Diseño de interfaces modernas y sistemas de diseño con Figma.',
-                'nivel' => 'Intermedio',
-                'costo' => '399.00',
-                'duracion' => '10 semanas',
-                'modalidad' => 'Virtual',
-                'fecha_inicio' => '2024-03-01',
-                'fecha_fin' => '2024-05-10',
-                'ciclo_id' => 4,
-                'docente_id' => 6, // Pedro Sánchez
+                'costo' => '150.00',
+                'duracion' => '12 semanas',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-03-01',
+                'fecha_fin' => '2025-05-24',
+                'ciclo_id' => 1,
+                'docente_id' => 2,
                 'estado' => 'activo'
             ],
 
-            // Cursos de Ciberseguridad (Ciclo 5)
+            // CICLO FISICA-QUIMICA (Cero) - Ciclo 2
             [
-                'nombre' => 'Ethical Hacking Básico',
-                'descripcion' => 'Introducción al hacking ético y pruebas de penetración.',
+                'nombre' => 'FÍSICA I',
+                'descripcion' => 'Conceptos fundamentales de física: mecánica, cinemática y dinámica.',
+                'nivel' => 'Básico',
+                'costo' => '200.00',
+                'duracion' => '14 semanas',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-03-01',
+                'fecha_fin' => '2025-06-07',
+                'ciclo_id' => 2,
+                'docente_id' => 3,
+                'estado' => 'activo'
+            ],
+            [
+                'nombre' => 'FÍSICA II',
+                'descripcion' => 'Termodinámica, ondas, electricidad y magnetismo.',
                 'nivel' => 'Intermedio',
-                'costo' => '699.00',
+                'costo' => '200.00',
+                'duracion' => '14 semanas',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-06-08',
+                'fecha_fin' => '2025-09-13',
+                'ciclo_id' => 2,
+                'docente_id' => 3,
+                'estado' => 'activo'
+            ],
+            [
+                'nombre' => 'QUÍMICA I',
+                'descripcion' => 'Fundamentos de química: estructura atómica, enlaces y reacciones químicas.',
+                'nivel' => 'Básico',
+                'costo' => '200.00',
+                'duracion' => '14 semanas',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-03-01',
+                'fecha_fin' => '2025-06-07',
+                'ciclo_id' => 2,
+                'docente_id' => 4,
+                'estado' => 'activo'
+            ],
+            [
+                'nombre' => 'QUÍMICA II',
+                'descripcion' => 'Química orgánica e inorgánica avanzada.',
+                'nivel' => 'Intermedio',
+                'costo' => '200.00',
+                'duracion' => '14 semanas',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-06-08',
+                'fecha_fin' => '2025-09-13',
+                'ciclo_id' => 2,
+                'docente_id' => 4,
+                'estado' => 'activo'
+            ],
+            [
+                'nombre' => 'QUÍMICA III',
+                'descripcion' => 'Química analítica y fisicoquímica.',
+                'nivel' => 'Avanzado',
+                'costo' => '200.00',
+                'duracion' => '14 semanas',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-09-14',
+                'fecha_fin' => '2025-12-20',
+                'ciclo_id' => 2,
+                'docente_id' => 4,
+                'estado' => 'activo'
+            ],
+
+            // CICLO MATEMATICA (Cero) - Ciclo 3
+            [
+                'nombre' => 'GEOMETRÍA I',
+                'descripcion' => 'Geometría plana: figuras geométricas, perímetros y áreas.',
+                'nivel' => 'Básico',
+                'costo' => '180.00',
                 'duracion' => '12 semanas',
-                'modalidad' => 'Virtual',
-                'fecha_inicio' => '2024-06-01',
-                'fecha_fin' => '2024-08-23',
-                'ciclo_id' => 5,
-                'docente_id' => 4, // Luis Martínez
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-03-01',
+                'fecha_fin' => '2025-05-24',
+                'ciclo_id' => 3,
+                'docente_id' => 2,
+                'estado' => 'activo'
+            ],
+            [
+                'nombre' => 'GEOMETRÍA II',
+                'descripcion' => 'Geometría del espacio: cuerpos geométricos y volúmenes.',
+                'nivel' => 'Intermedio',
+                'costo' => '180.00',
+                'duracion' => '12 semanas',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-06-01',
+                'fecha_fin' => '2025-08-23',
+                'ciclo_id' => 3,
+                'docente_id' => 2,
+                'estado' => 'activo'
+            ],
+            [
+                'nombre' => 'TRIGONOMETRÍA',
+                'descripcion' => 'Funciones trigonométricas, identidades y ecuaciones.',
+                'nivel' => 'Intermedio',
+                'costo' => '180.00',
+                'duracion' => '12 semanas',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-08-24',
+                'fecha_fin' => '2025-11-15',
+                'ciclo_id' => 3,
+                'docente_id' => 2,
+                'estado' => 'activo'
+            ],
+
+            // CICLO BIOMEDICAS (Formativo) - Ciclo 6
+            [
+                'nombre' => 'BIOLOGÍA',
+                'descripcion' => 'Fundamentos de biología: célula, tejidos, sistemas y evolución.',
+                'nivel' => 'Intermedio',
+                'costo' => '220.00',
+                'duracion' => '16 semanas',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-03-01',
+                'fecha_fin' => '2025-06-21',
+                'ciclo_id' => 6,
+                'docente_id' => 5,
+                'estado' => 'activo'
+            ],
+            [
+                'nombre' => 'ANATOMÍA',
+                'descripcion' => 'Anatomía humana: sistemas corporales y fisiología básica.',
+                'nivel' => 'Intermedio',
+                'costo' => '220.00',
+                'duracion' => '16 semanas',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-06-22',
+                'fecha_fin' => '2025-10-11',
+                'ciclo_id' => 6,
+                'docente_id' => 5,
+                'estado' => 'activo'
+            ],
+
+            // CICLO RM-RV (Formativo) - Ciclo 7
+            [
+                'nombre' => 'RAZ. MATEMÁTICO',
+                'descripcion' => 'Desarrollo del razonamiento matemático y resolución de problemas.',
+                'nivel' => 'Intermedio',
+                'costo' => '160.00',
+                'duracion' => '20 semanas',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-03-01',
+                'fecha_fin' => '2025-07-19',
+                'ciclo_id' => 7,
+                'docente_id' => 2,
+                'estado' => 'activo'
+            ],
+            [
+                'nombre' => 'RAZ. VERBAL',
+                'descripcion' => 'Desarrollo del razonamiento verbal, comprensión lectora y análisis de textos.',
+                'nivel' => 'Intermedio',
+                'costo' => '160.00',
+                'duracion' => '20 semanas',
+                'modalidad' => 'Presencial',
+                'fecha_inicio' => '2025-03-01',
+                'fecha_fin' => '2025-07-19',
+                'ciclo_id' => 7,
+                'docente_id' => 6,
                 'estado' => 'activo'
             ]
         ];

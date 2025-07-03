@@ -132,7 +132,7 @@
 <div class="login-container">
     <div class="login-card">
         <div class="login-logo">
-            <h1>COKITO+</h1>
+            <img src="{{ asset('images/logo.jpg') }}" alt="Logo Academia" style="max-width: 200px; height: auto; margin-bottom: 1rem;">
             <p>Sistema de Gestión Académica</p>
         </div>
 

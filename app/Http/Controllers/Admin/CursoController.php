@@ -62,6 +62,15 @@ class CursoController extends Controller
 
     public function destroy(Curso $curso)
     {
+        // Verificar si el curso puede ser eliminado
+        if ($curso->cursoEstudiantes->isNotEmpty() || 
+            $curso->videos->isNotEmpty() || 
+            $curso->materiales->isNotEmpty() || 
+            $curso->sesiones->isNotEmpty()) {
+            return redirect()->route('admin.cursos.index')
+                             ->with('error', 'No se puede eliminar el curso porque tiene relaciones activas.');
+        }
+
         $curso->delete();
 
         return redirect()->route('admin.cursos.index')

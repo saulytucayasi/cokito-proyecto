@@ -28,8 +28,8 @@
                             <input type="text" name="dni" id="dni" class="form-control" value="{{ $estudiante->dni }}" required>
                         </div>
                         <div class="form-group mb-3">
-                            <label for="email">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" value="{{ $estudiante->email }}" required>
+                            <label for="correo">Email</label>
+                            <input type="email" name="correo" id="correo" class="form-control" value="{{ $estudiante->correo }}" required>
                         </div>
                         <div class="form-group mb-3">
                             <label for="fecha_nacimiento">Fecha de Nacimiento</label>

@@ -436,7 +436,9 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="logo">COKITO+</div>
+                <div class="logo">
+                    <img src="{{ asset('images/logo.jpg') }}" alt="Logo Academia" style="max-width: 120px; height: auto;">
+                </div>
             </div>
             <nav class="sidebar-nav">
                 @php
@@ -555,7 +557,33 @@
                     <h1>@yield('header', 'Dashboard')</h1>
                 </div>
                 <div class="header-right">
-                    <span class="user-name">{{ $user->name ?? 'Usuario' }}</span>
+                    <div class="user-info" style="text-align: right; margin-right: 1rem;">
+                        @php
+                            $displayName = 'Usuario';
+                            $displaySubtitle = '';
+                            
+                            if ($role === 'admin') {
+                                $displayName = 'Administrador';
+                            } elseif ($role === 'estudiante') {
+                                $estudiante = \App\Models\Estudiante::where('usuario_id', $usuario->id)->first();
+                                if ($estudiante) {
+                                    $displayName = $estudiante->nombre . ' ' . $estudiante->apellido;
+                                    $displaySubtitle = 'DNI: ' . $estudiante->dni . ' | ' . $estudiante->correo;
+                                }
+                            } elseif ($role === 'docente') {
+                                $trabajador = \App\Models\Trabajador::where('usuario_id', $usuario->id)->first();
+                                if ($trabajador) {
+                                    $displayName = $trabajador->nombre . ' ' . $trabajador->apellido;
+                                    $displaySubtitle = $trabajador->correo;
+                                }
+                            }
+                        @endphp
+                        
+                        <div class="user-name" style="font-weight: 600; color: var(--text-color);">{{ $displayName }}</div>
+                        @if($displaySubtitle)
+                            <div class="user-subtitle" style="font-size: 0.8rem; color: #6b7280;">{{ $displaySubtitle }}</div>
+                        @endif
+                    </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="btn btn-danger btn-sm">Cerrar Sesión</button>
