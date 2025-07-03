@@ -30,24 +30,6 @@ class TrabajadorSeeder extends Seeder
                 'email' => 'maria.gonzalez@cokito.com',
                 'password' => 'docente123',
                 'rol' => 'docente'
-            ],
-            [
-                'usuario' => 'luis.martinez@cokito.com',
-                'email' => 'luis.martinez@cokito.com',
-                'password' => 'docente123',
-                'rol' => 'docente'
-            ],
-            [
-                'usuario' => 'ana.lopez@cokito.com',
-                'email' => 'ana.lopez@cokito.com',
-                'password' => 'docente123',
-                'rol' => 'docente'
-            ],
-            [
-                'usuario' => 'pedro.sanchez@cokito.com',
-                'email' => 'pedro.sanchez@cokito.com',
-                'password' => 'docente123',
-                'rol' => 'docente'
             ]
         ];
 
@@ -55,49 +37,31 @@ class TrabajadorSeeder extends Seeder
             Usuario::create($userData);
         }
 
-        // Crear trabajadores
+        // Crear trabajadores (solo admin + 2 docentes)
         $trabajadores = [
             [
                 'nombre' => 'Administrador Sistema',
+                'apellido' => 'Admin',
                 'correo' => 'admin@cokito.com',
                 'telefono' => '999999999',
                 'estado' => 'activo',
                 'usuario_id' => 1
             ],
             [
-                'nombre' => 'Carlos Rodríguez',
+                'nombre' => 'Carlos',
+                'apellido' => 'Rodríguez',
                 'correo' => 'carlos.rodriguez@cokito.com',
                 'telefono' => '987654321',
                 'estado' => 'activo',
                 'usuario_id' => 2
             ],
             [
-                'nombre' => 'María González',
+                'nombre' => 'María',
+                'apellido' => 'González',
                 'correo' => 'maria.gonzalez@cokito.com',
                 'telefono' => '987654322',
                 'estado' => 'activo',
                 'usuario_id' => 3
-            ],
-            [
-                'nombre' => 'Luis Martínez',
-                'correo' => 'luis.martinez@cokito.com',
-                'telefono' => '987654323',
-                'estado' => 'activo',
-                'usuario_id' => 4
-            ],
-            [
-                'nombre' => 'Ana López',
-                'correo' => 'ana.lopez@cokito.com',
-                'telefono' => '987654324',
-                'estado' => 'activo',
-                'usuario_id' => 5
-            ],
-            [
-                'nombre' => 'Pedro Sánchez',
-                'correo' => 'pedro.sanchez@cokito.com',
-                'telefono' => '987654325',
-                'estado' => 'activo',
-                'usuario_id' => 6
             ]
         ];
 
